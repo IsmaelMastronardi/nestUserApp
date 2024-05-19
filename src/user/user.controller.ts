@@ -5,31 +5,28 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from 'src/common/multer.config';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async createUser(
-    @Body('name') userName: string,
-    @Body('lastName') userLastName: string,
-    @Body('address') userAddress: string,
-    @Body('profilePicture') userProfilePicture: string,
-    @Body('password') userPassword: string,
+  @UseInterceptors(FileInterceptor('profilePicture', multerOptions))
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    const generatedId = await this.userService.createUser(
-      userName,
-      userLastName,
-      userAddress,
-      userProfilePicture,
-      userPassword,
-    );
-    return { id: generatedId };
+    const profilePicture = file ? file.path : undefined;
+    return await this.userService.createUser(createUserDto, profilePicture);
   }
 
   @UseGuards(AuthGuard('basic'))
