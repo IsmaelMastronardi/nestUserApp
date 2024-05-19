@@ -5,6 +5,8 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './user/user.model';
+import { UserService } from './user/user.service';
+import { BasicAuthStrategy } from './basic.strategy';
 
 @Module({
   imports: [
@@ -18,6 +20,6 @@ import { UserSchema } from './user/user.model';
     ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UserService, BasicAuthStrategy],
 })
 export class AppModule {}
