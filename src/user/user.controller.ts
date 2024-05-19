@@ -38,22 +38,23 @@ export class UserController {
 
   @UseGuards(AuthGuard('basic'))
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('profilePicture', multerOptions))
   async updateUser(
     @Param('id') userId: string,
     @Body('name') userName: string,
     @Body('lastName') userLastName: string,
     @Body('adress') userAdress: string,
-    @Body('profilePicture') userProfilePicture: string,
+    @UploadedFile() file: Express.Multer.File,
     @Body('password') userPassword: string,
   ) {
-    await this.userService.updateUser(
+    const profilePicture = file ? file.path : undefined;
+    return await this.userService.updateUser(
       userId,
       userName,
       userLastName,
       userAdress,
-      userProfilePicture,
+      profilePicture,
       userPassword,
     );
-    return null;
   }
 }
