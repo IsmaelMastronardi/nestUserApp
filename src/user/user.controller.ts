@@ -12,7 +12,7 @@ import {
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from 'src/common/multer.config';
+import { multerOptions } from '../common/multer.config';
 import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('user')
