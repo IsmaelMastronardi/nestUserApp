@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -23,12 +32,14 @@ export class UserController {
     return { id: generatedId };
   }
 
+  @UseGuards(AuthGuard('basic'))
   @Get()
   async getAllUsers() {
     const users = await this.userService.getUsers();
     return users;
   }
 
+  @UseGuards(AuthGuard('basic'))
   @Patch(':id')
   async updateUser(
     @Param('id') userId: string,
