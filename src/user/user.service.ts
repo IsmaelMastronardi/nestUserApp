@@ -24,4 +24,18 @@ export class UserService {
     const result = await newUser.save();
     return result.id as string;
   }
+
+  async getUsers() {
+    const users = await this.userModel.find().exec();
+    return {
+      count: users.length,
+      products: users.map((user) => ({
+        id: user.id,
+        name: user.name,
+        lastName: user.lastName,
+        adress: user.adress,
+        profilePicture: user.profilePicture,
+      })),
+    };
+  }
 }
