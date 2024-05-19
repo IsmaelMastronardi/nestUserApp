@@ -10,14 +10,14 @@ export class UserService {
   async createUser(
     name: string,
     lastName: string,
-    adress: string,
+    address: string,
     profilePicture: string,
     password: string,
   ) {
     const newUser = new this.userModel({
       name,
       lastName,
-      adress,
+      address,
       profilePicture,
       password,
     });
@@ -33,7 +33,7 @@ export class UserService {
         id: user.id,
         name: user.name,
         lastName: user.lastName,
-        adress: user.adress,
+        address: user.address,
         profilePicture: user.profilePicture,
       })),
     };
