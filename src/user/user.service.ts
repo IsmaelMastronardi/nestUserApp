@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './user.model';
@@ -12,29 +16,40 @@ export class UserService {
   async createUser(
     createUserDto: CreateUserDto,
     profilePicture: string,
-  ): Promise<string> {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const newUser = new this.userModel({
-      ...createUserDto,
-      profilePicture,
-      password: hashedPassword,
-    });
-    const result = await newUser.save();
-    return result.id as string;
+  ): Promise<object> {
+    try {
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+      const newUser = new this.userModel({
+        ...createUserDto,
+        profilePicture,
+        password: hashedPassword,
+      });
+      const result = await newUser.save();
+      return {
+        message: 'user created',
+        id: result.id,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Could not create user');
+    }
   }
 
   async getUsers() {
-    const users = await this.userModel.find().exec();
-    return {
-      count: users.length,
-      users: users.map((user) => ({
-        id: user.id,
-        name: user.name,
-        lastName: user.lastName,
-        address: user.address,
-        profilePicture: user.profilePicture,
-      })),
-    };
+    try {
+      const users = await this.userModel.find().exec();
+      return {
+        count: users.length,
+        users: users.map((user) => ({
+          id: user.id,
+          name: user.name,
+          lastName: user.lastName,
+          address: user.address,
+          profilePicture: user.profilePicture,
+        })),
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Could not get users');
+    }
   }
 
   async updateUser(
@@ -45,24 +60,30 @@ export class UserService {
     profilePicture: string,
     password: string,
   ) {
-    const updateUser = await this.findUser(id);
-
-    if (name) {
-      updateUser.name = name;
+    try {
+      const updateUser = await this.findUser(id);
+      if (name) {
+        updateUser.name = name;
+      }
+      if (lastName) {
+        updateUser.lastName = lastName;
+      }
+      if (adress) {
+        updateUser.address = adress;
+      }
+      if (profilePicture) {
+        updateUser.profilePicture = profilePicture;
+      }
+      if (password) {
+        updateUser.password = password;
+      }
+      updateUser.save();
+      return {
+        message: 'user updated',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Could not update user');
     }
-    if (lastName) {
-      updateUser.lastName = lastName;
-    }
-    if (adress) {
-      updateUser.address = adress;
-    }
-    if (profilePicture) {
-      updateUser.profilePicture = profilePicture;
-    }
-    if (password) {
-      updateUser.password = password;
-    }
-    updateUser.save();
   }
 
   async findByAddress(address: string): Promise<User | null> {
