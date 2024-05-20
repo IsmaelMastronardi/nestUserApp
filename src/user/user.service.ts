@@ -27,7 +27,7 @@ export class UserService {
     const users = await this.userModel.find().exec();
     return {
       count: users.length,
-      products: users.map((user) => ({
+      users: users.map((user) => ({
         id: user.id,
         name: user.name,
         lastName: user.lastName,
