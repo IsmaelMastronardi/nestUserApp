@@ -75,7 +75,8 @@ export class UserService {
         updateUser.profilePicture = profilePicture;
       }
       if (password) {
-        updateUser.password = password;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        updateUser.password = hashedPassword;
       }
       updateUser.save();
       return {
