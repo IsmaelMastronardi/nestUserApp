@@ -24,19 +24,24 @@ export class UserService {
         profilePicture,
         password: hashedPassword,
       });
+
       const result = await newUser.save();
+
       return {
         message: 'user created',
         id: result.id,
       };
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException('Could not create user');
     }
   }
 
   async getUsers() {
     try {
-      const users = await this.userModel.find().exec();
+      console.log('0000000000000000000000000');
+      const users = await this.userModel.find();
+      console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
       return {
         count: users.length,
         users: users.map((user) => ({
