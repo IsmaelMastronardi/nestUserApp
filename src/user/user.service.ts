@@ -13,6 +13,24 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UserService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
+  async getUsers() {
+    try {
+      const users = await this.userModel.find();
+      return {
+        count: users.length,
+        users: users.map((user) => ({
+          id: user.id,
+          name: user.name,
+          lastName: user.lastName,
+          address: user.address,
+          profilePicture: user.profilePicture,
+        })),
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Could not get users');
+    }
+  }
+
   async createUser(
     createUserDto: CreateUserDto,
     profilePicture: string,
@@ -33,24 +51,6 @@ export class UserService {
       };
     } catch (error) {
       throw new InternalServerErrorException('Could not create user');
-    }
-  }
-
-  async getUsers() {
-    try {
-      const users = await this.userModel.find();
-      return {
-        count: users.length,
-        users: users.map((user) => ({
-          id: user.id,
-          name: user.name,
-          lastName: user.lastName,
-          address: user.address,
-          profilePicture: user.profilePicture,
-        })),
-      };
-    } catch (error) {
-      throw new InternalServerErrorException('Could not get users');
     }
   }
 
