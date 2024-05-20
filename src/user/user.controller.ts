@@ -21,7 +21,7 @@ export class UserController {
 
   @Post()
   @UseInterceptors(FileInterceptor('profilePicture', multerOptions))
-  async create(
+  async createUser(
     @Body() createUserDto: CreateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
