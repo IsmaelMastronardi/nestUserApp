@@ -87,7 +87,6 @@ export class UserService {
   }
 
   async findByAddress(address: string): Promise<User | null> {
-    console.log(await this.userModel.findOne({ address: address }));
     return await this.userModel.findOne({ address: address });
   }
 
